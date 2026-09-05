@@ -1,3 +1,5 @@
+! Placeholder module for the N-dimensional Newton solver.
+! Will contain the iterative Newton-Raphson method for systems of nonlinear equations.
 module newton_nd
   implicit none
   private
