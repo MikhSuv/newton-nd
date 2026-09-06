@@ -15,4 +15,15 @@ module function_interfaces
       end function vector_func
    end interface
 
+   abstract interface
+      ! Interface for computing the Jacobian matrix of a function F: R^n -> R^n.
+      ! Input:  x(:)— point in R^n at which to evaluate the Jacobian
+      ! Output: j(n,n) - n x n matrix of partial derivatives
+      function jacobian_func(x) result(j)
+         import :: dp
+         real(dp), intent(in) :: x(:)
+         real(dp) :: j(size(x), size(x))
+      end function jacobian_func
+   end interface
+
 end module function_interfaces
