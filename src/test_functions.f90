@@ -6,7 +6,7 @@ module test_functions
    implicit none
 
    ! Dimension of the test system G: R^g_dim -> R^g_dim
-   integer, parameter :: g_dim = 5
+   integer, parameter :: g_dim = 50
 
 contains
 
