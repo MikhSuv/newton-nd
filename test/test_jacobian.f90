@@ -32,18 +32,16 @@ program test_jacobian
    call test_case([0.5_dp, 2.0_dp], F, F_jacobian, "point (0.5, 2)")
 
    allocate (x(g_dim), source=1.0_dp)
-   call test_case(x, G, G_jacobian, "point (x_i = 1), i = 1,...,5")
-   deallocate (x)
-   allocate (x(g_dim), source=-2.0_dp)
-   call test_case(x, G, G_jacobian, "point (x_i = -2), i = 1,...,5")
-   deallocate (x)
-   allocate (x(g_dim), source=0.0_dp)
-   call test_case(x, G, G_jacobian, "point (x_i = 0), i = 1,...,5")
+   call test_case(x, G, G_jacobian, "point (x_i = 1), i = 1,...,50")
+   x = -2.0_dp 
+   call test_case(x, G, G_jacobian, "point (x_i = -2), i = 1,...,50")
+   x = 0.0_dp
+   call test_case(x, G, G_jacobian, "point (x_i = 0), i = 1,...,50")
 
    do i = 1, g_dim
       x(i) = real(i, dp)
    end do
-   call test_case(x, G, G_jacobian, "point (x_i = i), i = 1,...,5")
+   call test_case(x, G, G_jacobian, "point (x_i = i), i = 1,...,50")
    deallocate (x)
 
    print *
@@ -75,15 +73,17 @@ contains
       J_exact = D(X)
 
       print *, "--- Test: "//trim(label)//" ---"
+      total = total + 1
       do i = 1, n
          do j = 1, n
-            total = total + 1
             if (abs(H(i, j) - J_exact(i, j)) > tol) then
                write (*, '(A,I0,A,I0,A,ES12.5,A,ES12.5,A,ES12.5)') &
                   "  FAIL: H(", i, ",", j, ") = ", H(i, j), &
                   "  expected ", J_exact(i, j), &
                   "  diff ", abs(H(i, j) - J_exact(i, j))
                failures = failures + 1
+               print *
+               return
             else
                write (*, '(A,I0,A,I0,A,ES12.5)') &
                   "  PASS: H(", i, ",", j, ") = ", H(i, j)
@@ -93,6 +93,7 @@ contains
       print *
    end subroutine test_case
 
+   ! Analytic Jacobian of F: J = [[2*x1, 2*x2], [2*x1, -1]]
    function F_jacobian(X) result(J)
       real(dp), intent(in) :: X(:)
       real(dp) :: J(size(X), size(X))
@@ -103,6 +104,9 @@ contains
 
    end function F_jacobian
 
+   ! Analytic Jacobian of G (cyclic system):
+   !   J(i,i) = 2*x(i),  J(i,i+1) = 1  for i = 1..g_dim-1
+   !   J(g_dim,g_dim) = 2*x(g_dim),  J(g_dim,1) = 1
    function G_jacobian(X) result(J)
       real(dp), intent(in) :: X(:)
       real(dp) :: J(size(X), size(X))

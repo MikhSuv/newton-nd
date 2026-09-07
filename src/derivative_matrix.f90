@@ -5,6 +5,9 @@ module derivative_matrix
    use precision_mod
    use function_interfaces
    implicit none
+   PRIVATE
+
+   PUBLIC :: calc_derivatives
 
 contains
 
